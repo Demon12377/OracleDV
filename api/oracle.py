@@ -11,7 +11,10 @@ from flask import Flask, request, jsonify
 # --- КОНФИГУРАЦИЯ ---
 ARTIFACT_FILENAME_CONFIG = 'oracle_ocean.npz'
 _SCRIPT_DIR = os.path.dirname(__file__)
-_FULL_ARTIFACT_PATH = os.path.join(_SCRIPT_DIR, ARTIFACT_FILENAME_CONFIG)
+# _SCRIPT_DIR будет что-то вроде /var/task/api во время выполнения на Vercel
+# Нам нужно подняться на один уровень (/var/task/) и затем зайти в data/
+_PROJECT_ROOT_APPROX = os.path.join(_SCRIPT_DIR, '..')
+_FULL_ARTIFACT_PATH = os.path.join(_PROJECT_ROOT_APPROX, 'data', ARTIFACT_FILENAME_CONFIG)
 
 # --- ФУНКЦИИ ОРАКУЛА (Адаптированные для Vercel) ---
 
@@ -20,8 +23,16 @@ def load_local_oracle_artifact():
     print(f"[ОРАКУЛ] Попытка загрузки артефакта: '{_FULL_ARTIFACT_PATH}'")
     if not os.path.exists(_FULL_ARTIFACT_PATH):
         print(f"[ОШИБКА] Артефакт '{_FULL_ARTIFACT_PATH}' не найден.")
-        print(f"Убедитесь, что файл '{ARTIFACT_FILENAME_CONFIG}' находится в директории '{_SCRIPT_DIR}'.")
-        print(f"Содержимое директории '{_SCRIPT_DIR}': {os.listdir(_SCRIPT_DIR if os.path.exists(_SCRIPT_DIR) and os.path.isdir(_SCRIPT_DIR) else '.')}")
+        print(f"Ожидаемый полный путь к артефакту: '{_FULL_ARTIFACT_PATH}'")
+        # Попробуем вывести содержимое предполагаемой директории data, если она существует
+        data_dir_path = os.path.join(_PROJECT_ROOT_APPROX, 'data')
+        if os.path.exists(data_dir_path) and os.path.isdir(data_dir_path):
+            print(f"Содержимое директории '{data_dir_path}': {os.listdir(data_dir_path)}")
+        else:
+            print(f"Директория '{data_dir_path}' не найдена или не является директорией.")
+        # Также выведем содержимое директории, где лежит сам скрипт, для контекста
+        if os.path.exists(_SCRIPT_DIR) and os.path.isdir(_SCRIPT_DIR):
+            print(f"Содержимое директории скрипта '{_SCRIPT_DIR}': {os.listdir(_SCRIPT_DIR)}")
         return None, None
     
     try:

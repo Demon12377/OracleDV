@@ -1,3 +1,14 @@
+---
+title: Intent Oracle
+emoji: ✨🔮
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: "3.50.2"
+app_file: app.py
+pinned: false
+---
+
 # New Project
 
 *Automatically synced with your [v0.dev](https://v0.dev) deployments*

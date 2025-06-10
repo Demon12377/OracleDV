@@ -2,4 +2,4 @@ Flask>=2.0
 numpy>=1.20
 scikit-learn>=1.0
 requests>=2.25
-gradio>=3.0
+gradio==5.33.1
